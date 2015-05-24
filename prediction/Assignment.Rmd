@@ -1,0 +1,52 @@
+---
+title: "Assignment"
+output:
+  html_document:
+    keep_md: yes
+    toc: yes
+---
+
+Prepare for model building
+================================
+First download the data.
+```{r}
+library(caret)
+train<-read.csv("./training.csv",header=T)
+testing<-read.csv("./testing.csv",header=T)
+training<-train[,c(6:11,37:49,60:68,84:86,102,113:124,140,151:160)]
+```
+The original dataset training has 19622 obervations and 160 variables including the one we are predicting for----variable "classe". We filter the first five colunms and the colunms with missing data to create new dataset "traning".
+
+```{r}
+table(training$classe)
+```
+classe is a factor varibale, and there are five levels of classe.
+
+
+Model building
+=================
+#classification tree
+```{r}
+modfit<-train(classe~.,data=training,method="rpart")#12min
+modfit$finalModel
+```
+Above is the final model.And we can plot the tree below.
+
+```{r plot1}
+library(rattle)
+fancyRpartPlot(modfit$finalModel,main="Classification Tree",sub="")
+```
+
+```{r}
+modfit$results[1,]
+```
+The accuracy of the final model is 0.55 on training data,and the kappa value equals 0.42.
+
+```{r plot2}
+library(ggplot2)
+qplot(roll_belt,pitch_forearm,colour=classe,data=training)
+```
+
+
+
+
